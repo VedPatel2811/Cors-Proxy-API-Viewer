@@ -33,7 +33,6 @@ Visit [http://localhost:5000](http://localhost:5000) and follow these steps:
 2. **Paste the cookie string** required for authentication.
 3. Click **"Fetch Data"** to view the results in a table.
 
----
 
 ## 🧠 Notes
 
