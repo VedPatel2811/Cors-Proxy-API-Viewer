@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>API Data Viewer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f4f4f4;
+    }
+    h2 {
+      color: #333;
+    }
+    input, button {
+      padding: 10px;
+      margin: 8px 0;
+      width: 100%;
+      max-width: 500px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    table {
+      margin-top: 20px;
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+    #tableContainer {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Fetch API Data</h2>
+  <input type="text" id="apiUrl" placeholder="Enter API URL" />
+  <input type="text" id="cookieStr" placeholder="Enter Cookie String" />
+  <button onclick="fetchData()">Fetch Data</button>
+
+  <div id="tableContainer"></div>
+
+  <script>
+    async function fetchData() {
+      const apiUrl = document.getElementById('apiUrl').value;
+      const cookie = document.getElementById('cookieStr').value;
+
+      try {
+        const response = await fetch('/fetch-data', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ apiUrl, cookie })
+        });
+
+        const json = await response.json();
+
+        if (Array.isArray(json.value)) {
+          generateTable(json.value);
+        } else {
+          document.getElementById('tableContainer').innerText = 'Invalid response format.';
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('tableContainer').innerText = 'Failed to fetch data.';
+      }
+    }
+
+    function generateTable(dataArray) {
+      if (dataArray.length === 0) return;
+
+      const keys = Object.keys(dataArray[0]);
+      let table = '<table><thead><tr>';
+      keys.forEach(key => {
+        table += `<th>${key}</th>`;
+      });
+      table += '</tr></thead><tbody>';
+
+      dataArray.forEach(row => {
+        table += '<tr>';
+        keys.forEach(key => {
+          table += `<td>${row[key]}</td>`;
+        });
+        table += '</tr>';
+      });
+
+      table += '</tbody></table>';
+      document.getElementById('tableContainer').innerHTML = table;
+    }
+  </script>
+</body>
+</html>
